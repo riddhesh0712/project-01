@@ -79,4 +79,39 @@ app.get("/api/users/:id", (req, res) => {
             });
         });
     });
+    app.delete("/api/users/:id", (req, res) => {
+        const id = Number(req.params.id);
+         // Read the file
+    fs.readFile("./MOCK_DATA.json", "utf8", (err, data) => {
+        if (err) {
+            return res.status(500).send("Error reading data file");
+        }
+
+        // Parse the JSON data
+        let users;
+        try {
+            users = JSON.parse(data);
+        } catch (parseErr) {
+            return res.status(500).send("Error parsing data file");
+        }
+
+        // Find the user with the specified ID
+        const userIndex = users.findIndex(user => user.id === id);
+        if (userIndex === -1) {
+            return res.status(404).send(`User with ID ${id} not found`);
+        }
+
+        // Remove the user
+        users.splice(userIndex, 1);
+
+        // // Write the updated data back to the file
+        // fs.writeFile("./MOCK_DATA.json", JSON.stringify(users, null, 2), "utf8", (writeErr) => {
+        //     if (writeErr) {
+        //         return res.status(500).send("Error writing data file");
+        //     }
+
+        //     res.send(`User with ID ${id} deleted successfully`);
+        // });
+    });
+    })
 app.listen(8000, () => console.log("Server Started"))
